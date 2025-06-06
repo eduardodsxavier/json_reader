@@ -179,7 +179,7 @@ foreach ($jsonStrings as $index => $json) {
 
     try {
         $decoded = json_decode($json, true);
-        renderJsonAsTable($decoded);
+        renderJson($decoded);
     } catch(Exception $err) {
         echo "<p class='error'>Error decoding JSON: " . $err . "</p>";
     } finally { 
@@ -191,14 +191,14 @@ foreach ($jsonStrings as $index => $json) {
 echo "</body></html>";
 
 
-function renderJsonAsTable($value) {
+function renderJson($value) {
     if (!is_array($value)) {
-        renderScalarAsTable($value);
+        renderScalar($value);
         return;
     } 
 
     if (!array_is_list($value)) { 
-        renderAssocAsTable($value);
+        renderObject($value);
         return;
     }
 
@@ -211,21 +211,21 @@ function renderJsonAsTable($value) {
     }
 
     if ($allAssoc) {
-        renderListOfAssocAsTable($value);
+        renderListOfObjects($value);
         return;
     }
 
     foreach ($value as $elem) {
         if (!is_scalar($elem)) {
-            renderListOfMixedAsTable($value);
+            renderListOfMixed($value);
             return;
         }
     }
 
-    renderListOfScalarsAsTable($value);
+    renderListOfScalars($value);
 }
 
-function renderAssocAsTable(array $assoc) {
+function renderObject(array $assoc) {
     $columns = array_keys($assoc);
 
     echo "<table class='nested-table'>";
@@ -238,7 +238,7 @@ function renderAssocAsTable(array $assoc) {
         echo "<td>";
         $cell = $assoc[$col];
         if (is_array($cell)) {
-            renderJsonAsTable($cell);
+            renderJson($cell);
         }
         elseif (is_null($cell)) {
             echo "<pre style='margin:0;'>null</pre>";
@@ -254,7 +254,7 @@ function renderAssocAsTable(array $assoc) {
     echo "</tr></table>";
 }
 
-function renderListOfAssocAsTable(array $listOfAssoc) {
+function renderListOfObjects(array $listOfAssoc) {
     $allKeys = [];
     foreach ($listOfAssoc as $row) {
         foreach (array_keys($row) as $k) {
@@ -282,7 +282,7 @@ function renderListOfAssocAsTable(array $listOfAssoc) {
 
             $cell = $row[$col];
             if (is_array($cell)) {
-                renderJsonAsTable($cell);
+                renderJson($cell);
             }
             elseif (is_null($cell)) {
                 echo "<pre style='margin:0;'>null</pre>";
@@ -300,7 +300,7 @@ function renderListOfAssocAsTable(array $listOfAssoc) {
     echo "</table>";
 }
 
-function renderListOfScalarsAsTable(array $list) {
+function renderListOfScalars(array $list) {
     echo "<table class='nested-table'>";
     echo "<tr><th>Value</th></tr>";
     foreach ($list as $elem) {
@@ -319,13 +319,13 @@ function renderListOfScalarsAsTable(array $list) {
     echo "</table>";
 }
 
-function renderListOfMixedAsTable(array $list) {
+function renderListOfMixed(array $list) {
     echo "<table class='nested-table'>";
     echo "<tr><th>Value</th></tr>";
     foreach ($list as $elem) {
         echo "<tr><td>";
         if (is_array($elem)) {
-            renderJsonAsTable($elem);
+            renderJson($elem);
         }
         elseif (is_null($elem)) {
             echo "<pre style='margin:0;'>null</pre>";
@@ -341,7 +341,7 @@ function renderListOfMixedAsTable(array $list) {
     echo "</table>";
 }
 
-function renderScalarAsTable($scalar) {
+function renderScalar($scalar) {
     echo "<table class='nested-table'>";
     echo "<tr><th>Value</th></tr><tr><td>";
     if (is_null($scalar)) {
