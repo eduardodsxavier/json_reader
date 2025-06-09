@@ -1,4 +1,7 @@
 <?php
+
+require("read_json.php");
+
 $jsonStrings = [
     '{"name": "Alice", "age": 25}',
 
@@ -162,196 +165,15 @@ $jsonStrings = [
 ];
 
 echo "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Structured JSON Tables</title>";
-echo "<style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    h2 { margin-top: 40px; }
-    table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
-    th, td { border: 1px solid #ccc; padding: 8px; vertical-align: top; }
-    th { background-color: #f2f2f2; text-align: left; }
-    pre { margin: 0; white-space: pre-wrap; word-wrap: break-word; }
-    .error { color: red; font-weight: bold; }
-    .nested-table { margin: 10px 0; }
-</style>";
+echo '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">';
+echo '<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>';
 echo "</head><body>";
 
 foreach ($jsonStrings as $index => $json) {
-    echo "<p><strong>Original JSON:</strong><br><pre>" . htmlspecialchars($json) . "</pre></p>";
-
-    try {
-        $decoded = json_decode($json, true);
-        renderJson($decoded);
-    } catch(Exception $err) {
-        echo "<p class='error'>Error decoding JSON: " . $err . "</p>";
-    } finally { 
-        echo "<hr>";
-    }
-
+    $json_render = new jsonRender();
+    $json_render->render($json);
+    break;
 }
 
 echo "</body></html>";
-
-
-function renderJson($value) {
-    if (!is_array($value)) {
-        renderScalar($value);
-        return;
-    } 
-
-    if (!array_is_list($value)) { 
-        renderObject($value);
-        return;
-    }
-
-    $allAssoc = true;
-    foreach ($value as $elem) {
-        if (!is_array($elem)) {
-            $allAssoc = false;
-            break;
-        }
-    }
-
-    if ($allAssoc) {
-        renderListOfObjects($value);
-        return;
-    }
-
-    foreach ($value as $elem) {
-        if (!is_scalar($elem)) {
-            renderListOfMixed($value);
-            return;
-        }
-    }
-
-    renderListOfScalars($value);
-}
-
-function renderObject(array $assoc) {
-    $columns = array_keys($assoc);
-
-    echo "<table class='nested-table'>";
-    echo "<tr>";
-    foreach ($columns as $col) {
-        echo "<th>" . htmlspecialchars($col) . "</th>";
-    }
-    echo "</tr><tr>";
-    foreach ($columns as $col) {
-        echo "<td>";
-        $cell = $assoc[$col];
-        if (is_array($cell)) {
-            renderJson($cell);
-        }
-        elseif (is_null($cell)) {
-            echo "<pre style='margin:0;'>null</pre>";
-        }
-        elseif (is_bool($cell)) {
-            echo "<pre style='margin:0;'>" . ($cell ? "true" : "false") . "</pre>";
-        }
-        else {
-            echo "<pre style='margin:0;'>" . htmlspecialchars((string)$cell) . "</pre>";
-        }
-        echo "</td>";
-    }
-    echo "</tr></table>";
-}
-
-function renderListOfObjects(array $listOfAssoc) {
-    $allKeys = [];
-    foreach ($listOfAssoc as $row) {
-        foreach (array_keys($row) as $k) {
-            if (!in_array($k, $allKeys, true)) {
-                $allKeys[] = $k;
-            }
-        }
-    }
-
-    echo "<table class='nested-table'>";
-    echo "<tr><th>#</th>";
-    foreach ($allKeys as $col) {
-        echo "<th>" . htmlspecialchars($col) . "</th>";
-    }
-    echo "</tr>";
-
-    foreach ($listOfAssoc as $i => $row) {
-        echo "<tr><td>" . ($i + 1) . "</td>";
-        foreach ($allKeys as $col) {
-            echo "<td>";
-            if (!array_key_exists($col, $row)) {
-                echo "</td>";
-                continue;
-            } 
-
-            $cell = $row[$col];
-            if (is_array($cell)) {
-                renderJson($cell);
-            }
-            elseif (is_null($cell)) {
-                echo "<pre style='margin:0;'>null</pre>";
-            }
-            elseif (is_bool($cell)) {
-                echo "<pre style='margin:0;'>" . ($cell ? "true" : "false") . "</pre>";
-            }
-            else {
-                echo "<pre style='margin:0;'>" . htmlspecialchars((string)$cell) . "</pre>";
-            }
-            echo "</td>";
-        }
-        echo "</tr>";
-    }
-    echo "</table>";
-}
-
-function renderListOfScalars(array $list) {
-    echo "<table class='nested-table'>";
-    echo "<tr><th>Value</th></tr>";
-    foreach ($list as $elem) {
-        echo "<tr><td>";
-        if (is_null($elem)) {
-            echo "<pre style='margin:0;'>null</pre>";
-        }
-        elseif (is_bool($elem)) {
-            echo "<pre style='margin:0;'>" . ($elem ? "true" : "false") . "</pre>";
-        }
-        else {
-            echo "<pre style='margin:0;'>" . htmlspecialchars((string)$elem) . "</pre>";
-        }
-        echo "</td></tr>";
-    }
-    echo "</table>";
-}
-
-function renderListOfMixed(array $list) {
-    echo "<table class='nested-table'>";
-    echo "<tr><th>Value</th></tr>";
-    foreach ($list as $elem) {
-        echo "<tr><td>";
-        if (is_array($elem)) {
-            renderJson($elem);
-        }
-        elseif (is_null($elem)) {
-            echo "<pre style='margin:0;'>null</pre>";
-        }
-        elseif (is_bool($elem)) {
-            echo "<pre style='margin:0;'>" . ($elem ? "true" : "false") . "</pre>";
-        }
-        else {
-            echo "<pre style='margin:0;'>" . htmlspecialchars((string)$elem) . "</pre>";
-        }
-        echo "</td></tr>";
-    }
-    echo "</table>";
-}
-
-function renderScalar($scalar) {
-    echo "<table class='nested-table'>";
-    echo "<tr><th>Value</th></tr><tr><td>";
-    if (is_null($scalar)) {
-        echo "<pre style='margin:0;'>null</pre>";
-    }
-    elseif (is_bool($scalar)) {
-        echo "<pre style='margin:0;'>" . ($scalar ? "true" : "false") . "</pre>";
-    }
-    else {
-        echo "<pre style='margin:0;'>" . htmlspecialchars((string)$scalar) . "</pre>";
-    }
-    echo "</td></tr></table>";
-}
+?>
