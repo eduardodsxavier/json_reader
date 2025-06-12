@@ -1,0 +1,8 @@
+{
+  "productId": "A123",
+  "name": "Wireless Mouse",
+  "price": 25.99,
+  "inStock": true,
+  "tags": ["electronics", "accessories"]
+}
+

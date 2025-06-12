@@ -1,0 +1,10 @@
+{
+  "city": "Paris",
+  "temperatureC": 22,
+  "condition": "Cloudy",
+  "forecast": [
+    {"day": "Monday", "high": 25, "low": 16},
+    {"day": "Tuesday", "high": 23, "low": 15}
+  ]
+}
+

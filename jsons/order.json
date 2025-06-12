@@ -1,0 +1,13 @@
+{
+  "orderId": 98765,
+  "customer": {
+    "name": "John Smith",
+    "email": "johnsmith@example.com"
+  },
+  "items": [
+    {"name": "Laptop", "quantity": 1, "price": 999.99},
+    {"name": "Mouse Pad", "quantity": 2, "price": 9.99}
+  ],
+  "total": 1019.97
+}
+

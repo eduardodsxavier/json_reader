@@ -1,0 +1,15 @@
+{
+  "postId": 101,
+  "title": "My Travel to Japan",
+  "author": "travel_blogger88",
+  "published": "2025-06-01",
+  "content": "I had an amazing trip to Kyoto and Tokyo...",
+  "comments": [
+    {
+      "user": "reader42",
+      "comment": "Sounds great!",
+      "timestamp": "2025-06-02T10:30:00Z"
+    }
+  ]
+}
+
