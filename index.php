@@ -24,6 +24,7 @@
           <button type="submit" class="btn btn-primary">Entrar</button>
         </div>
       </form>
+      <a href="/cadastro.php">cadastro</a>
     </div>
   </div>
 
@@ -32,11 +33,18 @@
 </html>
 
 <?php
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+require("database.php");
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $name = htmlspecialchars($_POST['nome']);
     $senha = htmlspecialchars($_POST['senha']);
 
-    header('Location: /cadastro.php');
-    die();
+    $db = new database();
+    if ($db->login($name, $senha)) {
+        header('Location: /home.php');
+        die();
+    }
+
+    echo "invalid";
 }
 ?>

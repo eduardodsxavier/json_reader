@@ -22,6 +22,7 @@
           <button type="submit" class="btn btn-primary">Cadastrar</button>
         </div>
       </form>
+      <a href="/">login</a>
     </div>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -29,9 +30,18 @@
 </html>
 
 <?php
+require("database.php");
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = htmlspecialchars($_POST['nome']);
     $senha = htmlspecialchars($_POST['senha']);
+
+    $db = new database();
+    try {
+        $db->register($name, $senha);
+    } catch (Exception $e) {
+        echo "Error: " . $e->getMessage();
+    }
 
     header('Location: /home.php');
     die();
