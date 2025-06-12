@@ -1,17 +1,6 @@
 <?php
 class JsonRender {
-    public function render($json) {
-        try {
-            $decoded = json_decode($json, true);
-            $this->renderJson($decoded);
-        } catch (Exception $err) {
-            echo "<div class='alert alert-danger'>Error decoding JSON: " . htmlspecialchars($err->getMessage()) . "</div>";
-        } finally {
-            echo "<hr class='my-4'>";
-        }
-    }
-
-    private function renderJson($value) {
+    public function renderJson($value) {
         if (!is_array($value)) {
             $this->renderScalar($value);
             return;
