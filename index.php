@@ -1,50 +1,49 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Página de Login</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
+<html>
+    <head>
+        <meta charset='UTF-8'>
+        <title>Structured JSON Tables</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            h2 { margin-top: 40px; }
+            table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+            th, td { border: 1px solid #ccc; padding: 8px; vertical-align: top; }
+            th { background-color: #f2f2f2; text-align: left; }
+            pre { margin: 0; white-space: pre-wrap; word-wrap: break-word; }
+            .error { color: red; font-weight: bold; }
+            .nested-table { margin: 10px 0; }
+        </style>
+    </head>
+    <body>
+        <h2>JSON</h2>
+        <hr>
+        <form method="post" enctype="multipart/form-data">
+            <input type="file" name="jsonFile" accept=".json" required>
+            <input type="submit" value="Upload and Read">
+        </form>
+        <hr>
+        <?php
+            require("read_json.php");
 
-  <div class="container">
-    <div class="login-container">
-      <h2 class="text-center mb-3">Login</h2>
-      <form method="POST">
-        <div class="mb-3">
-          <label for="nome" class="form-label">Nome</label>
-          <input type="text" class="form-control" name="nome" placeholder="Seu nome" required>
-        </div>
-        <div class="mb-3">
-          <label for="senha" class="form-label">Senha</label>
-          <input type="password" class="form-control" name="senha" placeholder="Digite sua senha" required>
-        </div>
-        <div class="d-grid gap-2">
-          <button type="submit" class="btn btn-primary">Entrar</button>
-        </div>
-      </form>
-      <a href="/cadastro.php">cadastro</a>
-    </div>
-  </div>
+            function render() {
+                if(isset($_FILES['jsonFile'])) {
+                    $jsonContent = file_get_contents($_FILES['jsonFile']['tmp_name']);
+                    $data = json_decode($jsonContent, true);
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+                    if (json_last_error() !== JSON_ERROR_NONE) {
+                        echo "<p style='color:red;'>Invalid JSON file.</p>";
+                        return;
+                    } 
+
+                    $json_render = new jsonRender();
+                    $json_render->renderJson($data);
+                }
+            }
+
+            if ($_SERVER['REQUEST_METHOD']) {
+                render();
+            }
+        ?>
+        <hr>
+    </body>
 </html>
-
-<?php
-require("database.php");
-
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $name = htmlspecialchars($_POST['nome']);
-    $senha = htmlspecialchars($_POST['senha']);
-
-    $db = new database();
-    if ($db->login($name, $senha)) {
-        header('Location: /home.php');
-        die();
-    }
-
-    echo "invalid";
-}
-?>

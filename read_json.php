@@ -4,9 +4,9 @@ class JsonRender {
         if (!is_array($value)) {
             $this->renderScalar($value);
             return;
-        }
+        } 
 
-        if (!array_is_list($value)) {
+        if (!array_is_list($value)) { 
             $this->renderObject($value);
             return;
         }
@@ -34,33 +34,36 @@ class JsonRender {
         $this->renderListOfScalars($value);
     }
 
-    private function renderObject(array $assoc) {
+    private function renderObject($assoc) {
         $columns = array_keys($assoc);
 
-        echo "<table class='table table-bordered my-3'>";
-        echo "<thead class='table-light'><tr>";
+        echo "<table class='nested-table'>";
+        echo "<tr>";
         foreach ($columns as $col) {
-            echo "<th scope='col'>" . htmlspecialchars($col) . "</th>";
+            echo "<th>" . htmlspecialchars($col) . "</th>";
         }
-        echo "</tr></thead><tbody><tr>";
+        echo "</tr><tr>";
         foreach ($columns as $col) {
             echo "<td>";
             $cell = $assoc[$col];
             if (is_array($cell)) {
                 $this->renderJson($cell);
-            } elseif (is_null($cell)) {
-                echo "<pre class='mb-0'>null</pre>";
-            } elseif (is_bool($cell)) {
-                echo "<pre class='mb-0'>" . ($cell ? "true" : "false") . "</pre>";
-            } else {
-                echo "<pre class='mb-0'>" . htmlspecialchars((string)$cell) . "</pre>";
+            }
+            elseif (is_null($cell)) {
+                echo "<pre style='margin:0;'>null</pre>";
+            }
+            elseif (is_bool($cell)) {
+                echo "<pre style='margin:0;'>" . ($cell ? "true" : "false") . "</pre>";
+            }
+            else {
+                echo "<pre style='margin:0;'>" . htmlspecialchars((string)$cell) . "</pre>";
             }
             echo "</td>";
         }
-        echo "</tr></tbody></table>";
+        echo "</tr></table>";
     }
 
-    private function renderListOfObjects(array $listOfAssoc) {
+    private function renderListOfObjects($listOfAssoc) {
         $allKeys = [];
         foreach ($listOfAssoc as $row) {
             foreach (array_keys($row) as $k) {
@@ -70,87 +73,96 @@ class JsonRender {
             }
         }
 
-        echo "<table class='table table-striped my-3'>";
-        echo "<thead class='table-light'><tr><th scope='col'>#</th>";
+        echo "<table class='nested-table'>";
+        echo "<tr><th>#</th>";
         foreach ($allKeys as $col) {
-            echo "<th scope='col'>" . htmlspecialchars($col) . "</th>";
+            echo "<th>" . htmlspecialchars($col) . "</th>";
         }
-        echo "</tr></thead><tbody>";
+        echo "</tr>";
 
         foreach ($listOfAssoc as $i => $row) {
-            echo "<tr><th scope='row'>" . ($i + 1) . "</th>";
+            echo "<tr><td>" . ($i + 1) . "</td>";
             foreach ($allKeys as $col) {
                 echo "<td>";
                 if (!array_key_exists($col, $row)) {
                     echo "</td>";
                     continue;
-                }
+                } 
 
                 $cell = $row[$col];
                 if (is_array($cell)) {
-                    $this->renderJson($cell);
-                } elseif (is_null($cell)) {
-                    echo "<pre class='mb-0'>null</pre>";
-                } elseif (is_bool($cell)) {
-                    echo "<pre class='mb-0'>" . ($cell ? "true" : "false") . "</pre>";
-                } else {
-                    echo "<pre class='mb-0'>" . htmlspecialchars((string)$cell) . "</pre>";
+                   $this->renderJson($cell);
+                }
+                elseif (is_null($cell)) {
+                    echo "<pre style='margin:0;'>null</pre>";
+                }
+                elseif (is_bool($cell)) {
+                    echo "<pre style='margin:0;'>" . ($cell ? "true" : "false") . "</pre>";
+                }
+                else {
+                    echo "<pre style='margin:0;'>" . htmlspecialchars((string)$cell) . "</pre>";
                 }
                 echo "</td>";
             }
             echo "</tr>";
         }
-        echo "</tbody></table>";
+        echo "</table>";
     }
 
-    private function renderListOfScalars(array $list) {
-        echo "<table class='table table-bordered my-3'>";
-        echo "<thead class='table-light'><tr><th scope='col'>Value</th></tr></thead><tbody>";
+    private function renderListOfScalars($list) {
+        echo "<table class='nested-table'>";
+        echo "<tr><th>Value</th></tr>";
         foreach ($list as $elem) {
             echo "<tr><td>";
             if (is_null($elem)) {
-                echo "<pre class='mb-0'>null</pre>";
-            } elseif (is_bool($elem)) {
-                echo "<pre class='mb-0'>" . ($elem ? "true" : "false") . "</pre>";
-            } else {
-                echo "<pre class='mb-0'>" . htmlspecialchars((string)$elem) . "</pre>";
+                echo "<pre style='margin:0;'>null</pre>";
+            }
+            elseif (is_bool($elem)) {
+                echo "<pre style='margin:0;'>" . ($elem ? "true" : "false") . "</pre>";
+            }
+            else {
+                echo "<pre style='margin:0;'>" . htmlspecialchars((string)$elem) . "</pre>";
             }
             echo "</td></tr>";
         }
-        echo "</tbody></table>";
+        echo "</table>";
     }
 
-    private function renderListOfMixed(array $list) {
-        echo "<table class='table table-bordered my-3'>";
-        echo "<thead class='table-light'><tr><th scope='col'>Value</th></tr></thead><tbody>";
+    private function renderListOfMixed($list) {
+        echo "<table class='nested-table'>";
+        echo "<tr><th>Value</th></tr>";
         foreach ($list as $elem) {
             echo "<tr><td>";
             if (is_array($elem)) {
                 $this->renderJson($elem);
-            } elseif (is_null($elem)) {
-                echo "<pre class='mb-0'>null</pre>";
-            } elseif (is_bool($elem)) {
-                echo "<pre class='mb-0'>" . ($elem ? "true" : "false") . "</pre>";
-            } else {
-                echo "<pre class='mb-0'>" . htmlspecialchars((string)$elem) . "</pre>";
+            }
+            elseif (is_null($elem)) {
+                echo "<pre style='margin:0;'>null</pre>";
+            }
+            elseif (is_bool($elem)) {
+                echo "<pre style='margin:0;'>" . ($elem ? "true" : "false") . "</pre>";
+            }
+            else {
+                echo "<pre style='margin:0;'>" . htmlspecialchars((string)$elem) . "</pre>";
             }
             echo "</td></tr>";
         }
-        echo "</tbody></table>";
+        echo "</table>";
     }
 
     private function renderScalar($scalar) {
-        echo "<table class='table table-bordered my-3'>";
-        echo "<thead class='table-light'><tr><th scope='col'>Value</th></tr></thead>";
-        echo "<tbody><tr><td>";
+        echo "<table class='nested-table'>";
+        echo "<tr><th>Value</th></tr><tr><td>";
         if (is_null($scalar)) {
-            echo "<pre class='mb-0'>null</pre>";
-        } elseif (is_bool($scalar)) {
-            echo "<pre class='mb-0'>" . ($scalar ? "true" : "false") . "</pre>";
-        } else {
-            echo "<pre class='mb-0'>" . htmlspecialchars((string)$scalar) . "</pre>";
+            echo "<pre style='margin:0;'>null</pre>";
         }
-        echo "</td></tr></tbody></table>";
+        elseif (is_bool($scalar)) {
+            echo "<pre style='margin:0;'>" . ($scalar ? "true" : "false") . "</pre>";
+        }
+        else {
+            echo "<pre style='margin:0;'>" . htmlspecialchars((string)$scalar) . "</pre>";
+        }
+        echo "</td></tr></table>";
     }
 }
 ?>
